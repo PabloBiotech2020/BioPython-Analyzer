@@ -2,67 +2,84 @@
 # -*- coding: utf-8 -*-
 
 #Importación de módulos de Python necesarios para el script
-import re
+import os
 import pandas as pd
+import numpy as np
+import pylab
 
-from Bio.ExPASy import Prosite
-from progress.bar import FillingCirclesBar
+from Bio import SeqIO
+from pathlib import Path
+import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm #Realiza la transformació de eje a degradado de colo
 
 
 
-#Function to parse the prosite.dat file
-def parse_dat(prositedat, output_file):
+#Función que realiza blast usando biopython
+def makeblast(query, subj, eval, out):
 	try:
-		with open(output_file, 'w') as dominios:
-			dominios.write('name\taccession\tdescription\tpattern\n')
-			handle = open('prosite.dat','r')
-			records = Prosite.parse(handle)
-			for record in records:
-    				dominios.write(	record.name+'\t'+record.accession+'\t'
-					       +record.description+'\t'+record.pattern+'\n')
-		return(dominios)
+		blastp_cline = ("blastp -query {0} -subject {1} -evalue {2} -outfmt "
+				"'6 qseqid qseq sseqid sseq qcovs pident evalue' > {3}"
+				"".format(query, subj, eval, out))
+		os.system(blastp_cline)
 	except:
-		print('No se ha podido leer el archivo: '+prositedat+'. Abortando módulo...')
+		print('Ignorando archivo '+query+': fallo al hacer BLAST. '
+		      '¿Ha comprobado el formato de input?')
+		pass
 
-#Función que convierte las expresiones de prosite a regex
-def dat_domainstoregex(entry_file):
+#Filtro de identidad y coverage para un blast_output
+def blast_filter(entrada, ident, cover, salida):
 	try:
-		dominios = pd.read_csv(entry_file, sep='\t') #Lectura del archivo input
-		dominios.dropna(subset=['pattern'], inplace=True) #Corta filas sin dominio
-		dominios.reset_index(inplace=True) #Y resetea el index para no dar problemas
-		#Convierte los pattern de prosite en regex válidos
-		dominios['pattern'] = dominios.pattern.replace({'-':'','x':'.','\{':'^[','\}':']',
-								'\(':'{','\)':'}'}, regex=True)
-		return(dominios)
+		filtrado = pd.read_csv(entrada, sep='\t', \
+		names=['qseqid', 'qseq', 'sseqid', 'sseq', 'qcovs', 'pident', 'evalue'])
+		filtrado = filtrado[(filtrado['qcovs'] > float(ident))
+			   & (filtrado['pident'] > float(cover))]
+		#Guardo el filtrado que se presenta como resultado
+		filtrado.to_csv(salida, sep='\t', index = False)
+		#Y finalmente detecto los rangos de coverage e identidad
+		mincov = filtrado['qcovs'].min()
+		maxcov = filtrado['qcovs'].max()
+		minid  = filtrado['pident'].min()
+		maxid  = filtrado['pident'].max()
+		blasthits = len(filtrado['qcovs'])
+		#Que voy a devolver para que pueda usarlos el script que llame al módulo
+		return(mincov, maxcov, minid, maxid, blasthits)
 	except:
-		print('No se ha podido leer el archivo: '+entry_file+'. Abortando módulo...')
+		print('Ignorando archivo '+entrada+': fallo al filtrar')
+		pass
 
-#Función de búsqueda de los prosite patterns en un documento dado
-#Para mayor comodidad, la función devuelve los pattern en formato regex
-#También incorpora una barra de progreso porque es de ejecución larga
-def search(inputlist, protein_seqs, tsvsalida):
+#Función que calcula un histograma 2D, aka heatmap, desde un blast.tsv
+def heatmap(blasttoplot, outputpng):
 	try:
-		numerodominios = 0 #Inicializa el total de matches
-		lineaalinea = pd.read_csv(protein_seqs, sep='\t')
-		bar = FillingCirclesBar('Buscando dominios...', max =
-	 				 len(inputlist['pattern'])*len(lineaalinea['qseqid']))
-		with open(tsvsalida, 'w') as found:
-			found.write('blast hit\tname\taccession\tdescription\tpattern\n')
-			for j in range(len(lineaalinea['qseqid'])):
-				for k in range(len(inputlist['pattern'])):
-					busca = inputlist.loc[k, 'pattern']
-					prosearch = lineaalinea.loc[j, 'sseq']
-					match = re.search(busca, prosearch, flags=re.I)
-					bar.next()
-					if match:
-						found.write( lineaalinea.loc[j,'qseqid']+'\t' \
-						            +inputlist.loc[k, 'name']+'\t' \
-						            +inputlist.loc[k, 'accession']+'\t' \
-						            +inputlist.loc[k, 'description']+'\t' \
-					                    +inputlist.loc[k, 'pattern']+'\n')
-						numerodominios += 1
-		bar.finish()
-		return(numerodominios)
+		(H, eje_x, eje_y) = np.histogram2d(blasttoplot.qcovs, blasttoplot.pident, bins=20)
+		im = plt.imshow(H, cmap=plt.cm.Blues, norm=LogNorm(),
+			extent=[eje_x[0], eje_x[-1], eje_y[0], eje_y[-1]],
+			origin='lower', aspect=1)
+
+		#Miscelánea de presentación del gráfico
+		plt.title('Heatmap para los resultados de BLAST')
+		plt.xlabel('Query Coverage per Subject')
+		plt.ylabel('Percentage Identity')
+		plt.colorbar()
+		plt.savefig(outputpng)
+		fig = plt.figure() #Esto me permite resetear el grafico que muestro
 	except:
-		print('Fallo al buscar dominios')
+		print('Imposible representar el heatmap para:'+blastplot+ \
+		      '. Posible fallo de BLAST')
+		pass
+
+#Función que calcula un histograma normal y corriente desde un input fasta
+def histogram(fastainput, outputpng):
+	try:
+		tamaño = [len(record) for record in SeqIO.parse(fastainput, 'fasta')]
+		pylab.hist(tamaño, bins=20)
+
+		#Micelánea de presentación del gráfico
+		pylab.title('Histograma para los resultados de BLAST')
+		pylab.xlabel('Longitud de la secuencia en pb')
+		pylab.ylabel('Número de secuencias')
+		plt.savefig(outputpng)
+		fig = plt.figure() #Esto me permite resetear el grafico que muestro
+	except:
+		print('Imposible representar el heatmap para:'+blastplot+ \
+		      '. Posible fallo de BLAST')
 		pass
