@@ -33,14 +33,14 @@ El script consta de un módulo principal, que debe ejecutarse como
 `python3 main.py [OPT] query subject coverage identity evalue`
 
 donde:
-* [OPT]: Las opciones que admite el script.
+* `[OPT]`: Las opciones que admite el script.
 * `query`: El fichero **en formato fasta o multifasta** que contiene las proteínas sobre las que se va a ejecutar la búsqueda
 * `subject`: El sujeto sobre el que se busca, es decir, el que usará blast para formar su database. Se debe proporcionar como una carpeta, preferiblemente un subdirectorio de la carpeta donde esté el script, que contenga **n genebanks de ADN**. También admite como input un archivo fasta o multifasta.
 * `coverage`: El valor mínimo (o cut-off) para la identidad, expresado como %, y en forma NN.NN [y exclusive](https://dle.rae.es/exclusive)
 * `identity`: El valor mínimo (o cut-off) para el coverage, expresado como %, y en forma NN.NN [y exclusive](https://dle.rae.es/exclusive)
 * `evalue`: [Describe](https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=FAQ#expect) el número de hits esperable en una db BLAST de un determinado tamaño. Se toman los valores inferiores al especificado.
 
-Durante la ejecución, main.py llama a los módulos secundarios, blast.py, muscle.py y prosite[.](https://pyformat.info/)py. La ejecución del archivo requiere de la presencia de un archivo prosite.dat en la carpeta en que se ejecuta[.](https://www.youtube.com/watch?v=irDJpCzeFpg)
+Durante la ejecución, main.py llama a los módulos secundarios, blast.py, muscle.py y prosite[.](https://pyformat.info/)py. La ejecución del archivo requiere de la presencia de un archivo prosite.dat en la carpeta en que se ejecuta[.](https://www.youtube.com/watch?v=irDJpCzeFpg). Si se llama al script sin proporcionar los parámetros coverage, identity e-evalue, se seleccionarán los valores por defecto de 50, 30 y  0.00001, respectivamente. No requiere instalación.
 
 ## Opciones
 Al llamar al script principal, tenemos las siguientes opciones:
@@ -51,10 +51,3 @@ Al llamar al script principal, tenemos las siguientes opciones:
 | ``--verbose | -v`` | Activa el [modo verbose](https://en.wikipedia.org/wiki/Verbose_mode) |
 | ``--options`` | Muestra las opciones del script |
 | ``--license`` | Muestra la licencia |
-
-## Nombres reservados
-
-El programa utiliza, y por tanto no deben llamarse así ninguno de los archivos input:
-
-| subjectfasta.fa | fastaquery.fa | resultado_blast.tsv | muscleinput.fasta | muscleoutput.fasta | dominios_encontrados.tsv | mapa.nw |
-| -------- | -------- | -------- | -------- | -------- | -------- | -------- |
