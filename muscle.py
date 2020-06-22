@@ -38,11 +38,11 @@ def muscle_maketree(alignd_sec, map):
 #Función que representa un árbol usando el módulo Phylo de biopython
 def Phylo_maketree(map, output_name):
 	try:
-		original = sys.stdout
 		sys.stdout = open(output_name, 'w')
 		tree = Phylo.read(map, 'newick')
 		arbol = Phylo.draw_ascii(tree)
-		sys.stdout = original
+		sys.stdout.close()
+		sys.stdout = open('/dev/stdout', 'w')
 	except:
 		print('Ignorando el archivo '+query+': Posible fallo de muscle')
 		pass

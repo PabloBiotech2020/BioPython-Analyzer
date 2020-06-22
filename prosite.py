@@ -15,11 +15,13 @@ def parse_dat(prositedat, output_file):
 	try:
 		with open(output_file, 'w') as dominios:
 			dominios.write('name\taccession\tdescription\tpattern\n')
-			handle = open('prosite.dat','r')
+			handle = open(prositedat,'r')
 			records = Prosite.parse(handle)
 			for record in records:
     				dominios.write(	record.name+'\t'+record.accession+'\t'
 					       +record.description+'\t'+record.pattern+'\n')
+			handle.close()
+		dominios.close()
 		return(dominios)
 	except:
 		print('No se ha podido leer el archivo: '+prositedat+'. Abortando módulo...')
@@ -61,7 +63,7 @@ def search(inputlist, protein_seqs, tsvsalida):
 						            +inputlist.loc[k, 'description']+'\t' \
 					                    +inputlist.loc[k, 'pattern']+'\n')
 						numerodominios += 1
-		bar.finish()
+		found.close(); bar.finish()
 		return(numerodominios)
 	except:
 		print('Fallo al buscar dominios')
