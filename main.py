@@ -33,7 +33,8 @@ import prosite
 def usage():
 	print('Para usar este script, debes llamar al script usando como argumento un archivo '
 	      ' multifasta query sobre el que se busca y un directorio que contenga los genbank' 
-	      ' subject, además de, en este orden, los criterios de coverage, identity y e-value')
+	      ' subject, además de, en este orden, los criterios de coverage, identity y e-value.'
+	      ' También debe haber un archivo prosite.dat en la carpeta de ejecución ')
 	sys.exit(1)
 
 #Función que muestra la licencia
@@ -55,10 +56,13 @@ def help():
 	      'sobre las que se va a ejecutar la búsqueda\n*subject: El sujeto sobre el'
 	      ' que se busca, que debe introducirse como (multi)fasta')
 
-	print('*coverage: El valor mínimo (o cut-off) para la identidad, expresado como %,'
+	print('*coverage: El valor mínimo (o cut-off) para la identidad, expresado como \%,'
 	      'y en forma NN.NN y exclusive \n*identity: El valor mínimo (o cut-off) para el'
 	      'coverage, expresado como %, y en forma NN.NN y exclusive\n*e-value: El e-value'
 	      'que usará blast para filtrar los results')
+
+	print('*Prosite.dat: Una base de datos de prosite que debe estar en la misma carpeta '
+	      'en la que se ejecutan los scripts')
 	sys.exit(0)
 
 def isthisvaluevalid(value):
