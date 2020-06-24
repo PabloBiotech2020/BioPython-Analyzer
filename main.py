@@ -265,7 +265,7 @@ def housekeeping(subindex, guardagraficos, workdir, querynames, query):
 		os.replace('./tmp/resultado_blast_{}.tsv'.format(i), \
 			   '{0}/resultado_blast.tsv'.format(rutaoutput))
 		os.replace('./tmp/Dominios_encontrados_{}.tsv'.format(i), \
-			   '{0}/Dominios_encontrados.tsv'.format(rutaoutput))
+			   '{0}/dominios_encontrados.tsv'.format(rutaoutput))
 		os.replace('./tmp/mapa_{}.nw'.format(i),'{0}/mapa.nw'.format(rutaoutput))
 		os.replace('./tmp/muscleoutput_{}.fasta'.format(i), \
                 	   '{0}/muscle_aligned.fasta'.format(rutaoutput))
@@ -305,19 +305,19 @@ def resumen(subindex, querynames, minid, mincov, maxid, maxcov, numerodominios, 
 			i += 1
 		print('Para todas, escriba "All"; para ninguna, escriba "None"')
 		querydeseado = input()
-		if querydeseado == "All":
+		if querydeseado == "All" or querydeseado == "all" or querydeseado == "a":
 			i = 1
 			while i < subindex+1:
 				print_output(i, querynames, minid, mincov, maxid, maxcov, numerodominios, blasthits)
 				i += 1
-		elif querydeseado == "None":
+		elif querydeseado == "None" or querydeseado == "none" or querydeseado == "n":
 			print('El programa ha finalizado')
 			sys.exit(0)
 		else:
-			if querynames[i-1]:
+			try:
 				showquery = int(querydeseado) - 1
 				print_output(showquery)
-			else:
+			except:
 				print('Input Inválido. El programa ha finalizado.')
 				sys.exit(1)
 	else:

@@ -5,7 +5,7 @@
 import re
 import pandas as pd
 
-from Bio.ExPASy import Prosite
+from Bio.ExPASy import Prosite, Prodoc
 from progress.bar import FillingCirclesBar
 
 
@@ -47,24 +47,48 @@ def search(inputlist, protein_seqs, tsvsalida):
 		numerodominios = 0 #Inicializa el total de matches
 		lineaalinea = pd.read_csv(protein_seqs, sep='\t')
 		bar = FillingCirclesBar('Buscando dominios...', max =
-	 				 len(inputlist['pattern'])*len(lineaalinea['qseqid']))
-		with open(tsvsalida, 'w') as found:
+	 				 len(inputlist['pattern'])*(len(lineaalinea['qseqid'])+1))
+		with open(tsvsalida, 'a') as found:
 			found.write('blast hit\tname\taccession\tdescription\tpattern\n')
-			for j in range(len(lineaalinea['qseqid'])):
+			for j in range(len(lineaalinea['sseqid'])+1):
 				for k in range(len(inputlist['pattern'])):
-					busca = inputlist.loc[k, 'pattern']
-					prosearch = lineaalinea.loc[j, 'sseq']
-					match = re.search(busca, prosearch, flags=re.I)
-					bar.next()
-					if match:
-						found.write( lineaalinea.loc[j,'qseqid']+'\t' \
-						            +inputlist.loc[k, 'name']+'\t' \
-						            +inputlist.loc[k, 'accession']+'\t' \
-						            +inputlist.loc[k, 'description']+'\t' \
-					                    +inputlist.loc[k, 'pattern']+'\n')
-						numerodominios += 1
+					#Para el query hago esto
+					if j == 0:
+						busca = inputlist.loc[k, 'pattern']
+						prosearch = lineaalinea.loc[1, 'qseq']
+						match = re.search(busca, prosearch, flags=re.I)
+						bar.next()
+						if match:
+							found.write( lineaalinea.loc[1,'qseqid']+'\t' \
+							            +inputlist.loc[k, 'name']+'\t' \
+							            +inputlist.loc[k, 'accession']+'\t' \
+							            +inputlist.loc[k, 'description']+'\t' \
+						                    +inputlist.loc[k, 'pattern']+'\n')
+							numerodominios += 1
+
+					# Y esto lo hago para los multiples subjects
+					else:
+						busca = inputlist.loc[k, 'pattern']
+						prosearch = lineaalinea.loc[j-1, 'sseq']
+						match = re.search(busca, prosearch, flags=re.I)
+						bar.next()
+						if match:
+							found.write( lineaalinea.loc[j-1,'sseqid']+'\t' \
+							            +inputlist.loc[k, 'name']+'\t' \
+							            +inputlist.loc[k, 'accession']+'\t' \
+							            +inputlist.loc[k, 'description']+'\t' \
+						                    +inputlist.loc[k, 'pattern']+'\n')
+							numerodominios += 1
+
 		found.close(); bar.finish()
 		return(numerodominios)
 	except:
 		print('Fallo al buscar dominios')
 		pass
+
+#Función que devuelve el valor de la docu para cada id de prosite
+def parse_doc(prositedoc, id):
+	with open(prositedoc, 'r', encoding='cp1252') as prositeschachi:
+		for record in Prodoc.parse(prositeschachi):
+			if record.accession == id:
+				return record.text
