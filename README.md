@@ -40,7 +40,7 @@ donde:
 * `identity`: El valor mínimo (o cut-off) para el coverage, expresado como %, y en forma NN.NN [y exclusive](https://dle.rae.es/exclusive)
 * `evalue`: [Describe](https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=FAQ#expect) el número de hits esperable en una db BLAST de un determinado tamaño. Se toman los valores inferiores al especificado.
 
-Durante la ejecución, main.py llama a los módulos secundarios, blast.py, muscle.py y prosite[.](https://pyformat.info/)py. La ejecución del archivo requiere de la presencia de un archivo prosite.dat en la carpeta en que se ejecuta[.](https://www.youtube.com/watch?v=irDJpCzeFpg). Si se llama al script sin proporcionar los parámetros coverage, identity e-evalue, se seleccionarán los valores por defecto de 50, 30 y  0.00001, respectivamente. No requiere instalación.
+Durante la ejecución, main.py llama a los módulos secundarios, blast.py, muscle.py y prosite[.](https://pyformat.info/)py. La ejecución del archivo requiere de la presencia de un archivo prosite.dat en la carpeta en que se ejecuta[.](https://www.youtube.com/watch?v=irDJpCzeFpg). Si no lo tienes, puedes descargar dicho archivo [aquí](https://mega.nz/file/5iJygYQC#EuUTz_SInscP0aga9-u853sUQhV3usdE4rH0kgbkrbk). Si se llama al script sin proporcionar los parámetros coverage, identity e-evalue, se seleccionarán los valores por defecto de 50, 30 y  0.00001, respectivamente. No requiere instalación.
 
 ## Opciones
 Al llamar al script principal, tenemos las siguientes opciones:
