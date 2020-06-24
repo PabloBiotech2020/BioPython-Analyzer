@@ -51,7 +51,7 @@ Al llamar al script principal, tenemos las siguientes opciones:
 
 | Opción | Descripción |
 | -------- | -------- |
-| ``--help | -h`` | Muestra la ayuda |
-| ``--verbose | -v`` | Activa el [modo verbose](https://en.wikipedia.org/wiki/Verbose_mode) |
+| ``--help`` o ``-h`` | Muestra la ayuda |
+| ``--verbose`` o ``-v`` | Activa el [modo verbose](https://en.wikipedia.org/wiki/Verbose_mode) |
 | ``--options`` | Muestra las opciones del script |
 | ``--license`` | Muestra la licencia |
