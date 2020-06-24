@@ -1,4 +1,4 @@
-¿Escribes software libre? ¡Usa una forja libre! Github es código cerrado, por lo que la repo principal de este proyecto está disponible en [codeberg](https://codeberg.org/FlyingFlamingo/BioPython-Analyzer). Si quieres reportar un fallo o contribuir código, por favor contáctame; la repo de GH es sólamente un mirror donde issues y pull requests serán ignoradas.
+¿Escribes software libre? ¡Usa una forja libre! Github es código cerrado, por lo que la repo principal de este proyecto está disponible en [codeberg](https://codeberg.org/FlyingFlamingo/BioPython-Analyzer). Si quieres reportar un fallo o contribuir código, por favor usa codeberg; la repo de GH es sólamente un mirror donde issues y pull requests serán ignoradas.
 
 -----
 
