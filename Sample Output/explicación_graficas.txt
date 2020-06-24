@@ -1,0 +1,3 @@
+* Histograma.png muestra el número de fragmentos que da BLAST para cada longitud de secuencia. Permite ver si, por ejemplo, tienen una distribución dada que indique distintos tipos de alineamiento
+
+*Heatmap.png muestra la distribución de las secuencias según su coverage y su identity; lo ideal sería que la mayoría estén en máximos valores de ambas; los que estén muy alejados de la esquina superior dcha indican baja calidad de match
